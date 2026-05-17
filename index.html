@@ -1049,7 +1049,10 @@
             try {
               const res = await fetch('https://zphecbxxnxtebizjrbqi.supabase.co/functions/v1/contact-form', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwaGVjYnh4bnh0ZWJpempyYnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNTI0NjAsImV4cCI6MjA5MDYyODQ2MH0.zzRNymHEyTBe2d-Ohn-fSfmdNJSqgo11MPBK2Uv8HSc',
+                },
                 body: JSON.stringify({
                   name: document.getElementById('f-name').value,
                   email: document.getElementById('f-email').value,
