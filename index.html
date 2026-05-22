@@ -933,6 +933,94 @@
   </div>
 </section>
 
+<!-- ======================= DEMOLITION CAROUSEL ======================= -->
+<section class="relative bg-ink py-20 md:py-28 overflow-hidden">
+  <div class="max-w-[1400px] mx-auto px-5 md:px-10">
+    <div class="text-center mb-12">
+      <div class="font-mono text-[11px] tracking-[0.3em] uppercase text-lime-brand mb-4">Evidence on the Ground</div>
+      <h2 class="font-display text-3xl md:text-5xl text-paper leading-tight">What happens when<br><span class="italic text-lime-brand">no one checks.</span></h2>
+      <p class="text-paper/60 mt-4 font-mono text-sm tracking-wide max-w-xl mx-auto">These are real sites. Real losses. A Planning Risk Report could have changed every one of these outcomes.</p>
+    </div>
+
+    <div class="relative overflow-hidden rounded-sm" id="demolition-carousel">
+      <!-- Slides -->
+      <div class="flex transition-transform duration-700 ease-in-out" id="carousel-track">
+        <div class="min-w-full relative">
+          <img src="logos/demoli 1.jpg" alt="Demolition site 1" class="w-full h-[500px] md:h-[620px] object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent"></div>
+          <div class="absolute bottom-10 left-10 right-10">
+            <div class="font-mono text-[10px] tracking-widest uppercase text-lime-brand mb-2">01 / 03</div>
+            <p class="font-display text-xl md:text-3xl text-paper italic leading-snug">A structure raised over years —<br>cleared in days.</p>
+          </div>
+        </div>
+        <div class="min-w-full relative">
+          <img src="logos/Demoli 2.jpg" alt="Demolition site 2" class="w-full h-[500px] md:h-[620px] object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent"></div>
+          <div class="absolute bottom-10 left-10 right-10">
+            <div class="font-mono text-[10px] tracking-widest uppercase text-lime-brand mb-2">02 / 03</div>
+            <p class="font-display text-xl md:text-3xl text-paper italic leading-snug">Government acquisition —<br>invisible until it wasn't.</p>
+          </div>
+        </div>
+        <div class="min-w-full relative">
+          <img src="logos/demoli3.jpeg" alt="Demolition site 3" class="w-full h-[500px] md:h-[620px] object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent"></div>
+          <div class="absolute bottom-10 left-10 right-10">
+            <div class="font-mono text-[10px] tracking-widest uppercase text-lime-brand mb-2">03 / 03</div>
+            <p class="font-display text-xl md:text-3xl text-paper italic leading-snug">No title check. No zoning check.<br>No recourse.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prev / Next buttons -->
+      <button id="carousel-prev" onclick="moveCarousel(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-ink/70 hover:bg-lime-brand hover:text-ink text-paper flex items-center justify-center transition text-xl font-bold">‹</button>
+      <button id="carousel-next" onclick="moveCarousel(1)" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-ink/70 hover:bg-lime-brand hover:text-ink text-paper flex items-center justify-center transition text-xl font-bold">›</button>
+
+      <!-- Dots -->
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        <button onclick="goToSlide(0)" class="carousel-dot w-2 h-2 rounded-full bg-paper/40 hover:bg-lime-brand transition"></button>
+        <button onclick="goToSlide(1)" class="carousel-dot w-2 h-2 rounded-full bg-paper/40 hover:bg-lime-brand transition"></button>
+        <button onclick="goToSlide(2)" class="carousel-dot w-2 h-2 rounded-full bg-paper/40 hover:bg-lime-brand transition"></button>
+      </div>
+    </div>
+
+    <!-- CTA below carousel -->
+    <div class="text-center mt-10">
+      <a href="#contact" class="btn-lime px-8 py-4 text-sm font-semibold uppercase tracking-wider inline-flex items-center gap-3">
+        Get Your Planning Risk Report
+        <span>→</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const totalSlides = 3;
+
+    function updateCarousel() {
+      document.getElementById('carousel-track').style.transform = `translateX(-${currentSlide * 100}%)`;
+      document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+        dot.classList.toggle('bg-lime-brand', i === currentSlide);
+        dot.classList.toggle('bg-paper/40', i !== currentSlide);
+      });
+    }
+
+    function moveCarousel(dir) {
+      currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
+      updateCarousel();
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateCarousel();
+    }
+
+    // Auto-advance every 5 seconds
+    setInterval(() => moveCarousel(1), 5000);
+
+    updateCarousel();
+  </script>
+</section>
+
 <!-- ======================= COMING SOON / SPECIAL FEATURE ======================= -->
 <section id="coming-soon" class="relative bg-forest-deep text-paper py-20 md:py-28 overflow-hidden">
   <!-- Layered abstract visual -->
