@@ -243,6 +243,34 @@
 <section id="top" class="relative min-h-screen bg-ink text-paper overflow-hidden pt-16">
   <div class="absolute inset-0 grid-lines opacity-60"></div>
 
+  <!-- Consultant portrait — atmospheric background layer -->
+  <div class="absolute inset-0 pointer-events-none select-none" style="z-index:0">
+    <img src="logos/Dajipp.jpeg" alt=""
+      style="
+        position:absolute;
+        right:0;
+        bottom:0;
+        height:100%;
+        width:auto;
+        max-width:60%;
+        object-fit:contain;
+        object-position:bottom right;
+        opacity:0.32;
+        filter:grayscale(100%) contrast(1.2) brightness(0.9);
+        -webkit-mask-image:linear-gradient(to left, black 40%, transparent 90%);
+        mask-image:linear-gradient(to left, black 40%, transparent 90%);
+      "
+    />
+    <!-- Fade bottom and left edges into background -->
+    <div style="
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(to right, #0d0d0d 20%, transparent 60%),
+        linear-gradient(to top, #0d0d0d 8%, transparent 35%);
+    "></div>
+  </div>
+
   <!-- Decorative forest green blob -->
   <div class="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-forest-brand/30 blur-3xl"></div>
   <div class="absolute bottom-0 -left-40 w-[500px] h-[500px] rounded-full bg-lime-brand/10 blur-3xl"></div>
