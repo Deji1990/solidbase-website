@@ -244,30 +244,42 @@
   <div class="absolute inset-0 grid-lines opacity-60"></div>
 
   <!-- Consultant portrait — atmospheric background layer -->
+  <style>
+    .consultant-img {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      height: 100%;
+      width: auto;
+      max-width: 60%;
+      object-fit: contain;
+      object-position: bottom right;
+      opacity: 0.28;
+      filter: grayscale(100%) contrast(1.15) brightness(1.05) saturate(0);
+      -webkit-mask-image: linear-gradient(to left, black 35%, transparent 85%);
+      mask-image: linear-gradient(to left, black 35%, transparent 85%);
+    }
+    @media (max-width: 768px) {
+      .consultant-img {
+        right: 50%;
+        transform: translateX(50%);
+        max-width: 90%;
+        height: 70%;
+        opacity: 0.20;
+        -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 90%);
+        mask-image: linear-gradient(to bottom, black 30%, transparent 90%);
+      }
+    }
+  </style>
   <div class="absolute inset-0 pointer-events-none select-none" style="z-index:0">
-    <img src="logos/Dajipp.jpeg" alt=""
-      style="
-        position:absolute;
-        right:0;
-        bottom:0;
-        height:100%;
-        width:auto;
-        max-width:60%;
-        object-fit:contain;
-        object-position:bottom right;
-        opacity:0.32;
-        filter:grayscale(100%) contrast(1.2) brightness(0.9);
-        -webkit-mask-image:linear-gradient(to left, black 40%, transparent 90%);
-        mask-image:linear-gradient(to left, black 40%, transparent 90%);
-      "
-    />
-    <!-- Fade bottom and left edges into background -->
+    <img src="logos/Dajipp.jpeg" alt="" class="consultant-img" />
+    <!-- Fade edges into background -->
     <div style="
       position:absolute;
       inset:0;
       background:
-        linear-gradient(to right, #0d0d0d 20%, transparent 60%),
-        linear-gradient(to top, #0d0d0d 8%, transparent 35%);
+        linear-gradient(to right, #0d0d0d 18%, transparent 55%),
+        linear-gradient(to top, #0d0d0d 8%, transparent 30%);
     "></div>
   </div>
 
