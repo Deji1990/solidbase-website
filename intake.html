@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Assessment Request — Solidbase Consulting</title>
+<link rel="icon" type="image/png" href="logos/ICON @4x.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,600&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          lime: { brand: '#8ECF0F' },
+          forest: { brand: '#006837', deep: '#00482A' },
+          ink: '#0A0A0A',
+          paper: '#F5F3EE',
+          bone: '#E8E4DA',
+        },
+        fontFamily: {
+          display: ['Fraunces', 'serif'],
+          sans: ['Outfit', 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  :root {
+    --lime: #8ECF0F;
+    --forest: #006837;
+    --forest-deep: #00482A;
+    --ink: #0A0A0A;
+    --paper: #F5F3EE;
+    --bone: #E8E4DA;
+  }
+  * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, sans-serif; background: var(--bone); color: var(--ink); overflow-x: hidden; }
+
+  .font-display { font-family: 'Fraunces', serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+  .btn-lime {
+    background: var(--lime); color: var(--ink);
+    transition: transform .25s ease, box-shadow .25s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-lime:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -8px rgba(142,207,15,0.55); }
+
+  .grid-lines {
+    background-image: linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Field styles */
+  .field-input {
+    width: 100%; background: transparent; border: none;
+    border-bottom: 2px solid var(--ink); padding: 6px 0 10px;
+    font-family: 'Fraunces', serif; font-size: 1.05rem;
+    outline: none; transition: border-color 0.2s; color: var(--ink);
+  }
+  .field-input::placeholder { color: rgba(10,10,10,0.3); }
+  .field-input:focus { border-bottom-color: var(--forest); }
+  .field-input.error { border-bottom-color: #dc2626; }
+  select.field-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230A0A0A' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 4px center; padding-right: 24px; }
+  textarea.field-input { resize: vertical; padding-top: 8px; min-height: 80px; }
+
+  .field-label {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(10,10,10,0.5); margin-bottom: 6px;
+  }
+  .field-error {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: #dc2626; margin-top: 5px; display: none;
+  }
+  .field-error.show { display: block; }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 2px dashed rgba(0,104,55,0.3); padding: 20px 16px;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s; text-align: center;
+  }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--forest); background: rgba(0,104,55,0.05); }
+  .upload-zone.has-file { border-color: var(--forest); border-style: solid; background: rgba(0,104,55,0.05); }
+
+  /* Checkbox */
+  .check-item { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; padding: 4px 0; }
+  .check-item input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--forest); flex-shrink: 0; margin-top: 2px; cursor: pointer; }
+
+  /* Section */
+  .section-block { padding: 3rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); }
+  .section-block:last-of-type { border-bottom: none; }
+
+  /* Tier badges */
+  .badge-basic    { background: var(--ink); color: var(--paper); }
+  .badge-standard { background: var(--ink); color: var(--lime); }
+  .badge-premium  { background: var(--forest); color: var(--paper); }
+
+  /* Spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { display: inline-block; width: 15px; height: 15px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+
+  /* Honeypot — visually hidden but not display:none */
+  .hp-field { opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1; pointer-events: none; }
+
+  /* Progress bar */
+  .progress-bar { height: 3px; background: var(--lime); transition: width 0.4s ease; }
+
+  /* Tier hint badge */
+  .hint-important { color: var(--forest); font-weight: 600; }
+  .hint-useful    { color: rgba(10,10,10,0.5); }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="bg-ink text-paper px-5 md:px-10 py-4 flex items-center justify-between sticky top-0 z-50">
+  <a href="index.html" class="flex items-center gap-3 group">
+    <img src="logos/ICON @4x.png" alt="Solidbase" class="h-8 w-auto" />
+    <span class="font-mono text-[10px] tracking-widest uppercase text-white/50 group-hover:text-lime-brand transition">← Back to site</span>
+  </a>
+  <div class="font-mono text-[10px] tracking-widest uppercase text-white/30">Assessment Intake</div>
+</nav>
+
+<!-- ===== HEADER ===== -->
+<header class="bg-ink text-paper py-12 md:py-16 relative overflow-hidden">
+  <div class="absolute inset-0 grid-lines"></div>
+  <div class="absolute bottom-0 left-0 right-0 bg-bone" style="height:3px;"></div>
+  <div class="relative max-w-[820px] mx-auto px-5 md:px-10">
+    <div class="flex items-center gap-3 mb-6">
+      <span class="font-mono text-[10px] tracking-[0.3em] uppercase text-lime-brand">Assessment Request</span>
+      <span class="h-px flex-1 bg-white/10"></span>
+      <span id="tier-badge" class="font-mono text-[10px] tracking-widest uppercase px-3 py-1 badge-standard">Standard</span>
+    </div>
+    <h1 class="font-display font-bold text-4xl md:text-6xl leading-tight mb-4">
+      Planning Risk<br><span id="tier-headline" class="italic text-lime-brand">Assessment.</span>
+    </h1>
+    <p id="tier-description" class="text-white/60 max-w-lg leading-relaxed text-sm md:text-base">
+      Complete the sections below. Your submission will be reviewed and signed off by a registered town planner within 24–48 hours.
+    </p>
+    <a href="index.html#pricing" class="mt-5 inline-block font-mono text-[10px] tracking-widest uppercase text-white/30 hover:text-lime-brand transition">← Change tier</a>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="max-w-[820px] mx-auto px-5 md:px-10 py-14" id="form-container">
+  <form id="intake-form" novalidate autocomplete="off">
+
+    <!-- Honeypot — bot trap -->
+    <input class="hp-field" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    <!-- ======= § A — CLIENT DETAILS ======= -->
+    <div class="section-block">
+      <div class="mb-8">
+        <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-forest-brand mb-2">§ A — Client Details</div>
+        <h2 class="font-display text-2xl md:text-3xl font-bold">Who are you?</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-x-8 gap-y-8">
+        <div>
+          <label class="field-label">Full Name <span class="text-red-500">*</span></label>
+          <input id="full_name" type="text" class="field-input" placeholder="e.g. Adebayo Okafor" />
+          <div class="field-error" id="err-full_name">Full name is required.</div>
+        </div>
+        <div>
+          <label class="field-label">Email Address <span class="text-red-500">*</span></label>
+          <input id="email" type="email" class="field-input" placeholder="you@example.com" />
+          <div class="field-error" id="err-email">A valid email address is required.</div>
+        </div>
+        <div>
+          <label class="field-label">Phone / WhatsApp <span class="text-red-500">*</span></label>
+          <input id="phone" type="tel" class="field-input" placeholder="+234 801 234 5678" />
+          <div class="field-error" id="err-phone">Phone number is required.</div>
+        </div>
+        <div>
+          <label class="field-label">Country of Residence <span class="text-red-500">*</span></label>
+          <select id="country" class="field-input">
+            <option value="">Select country…</option>
+            <option>Nigeria</option>
+            <option>United Kingdom</option>
+            <option>United States</option>
+            <option>Canada</option>
+            <option>Ireland</option>
+            <option>Germany</option>
+            <option>Italy</option>
+            <option>Netherlands</option>
+            <option>Australia</option>
+            <option>South Africa</option>
+            <option>Other</option>
+          </select>
+          <div class="field-error" id="err-country">Please select your country of residence.</div>
+        </div>
+        <div class="md:col-span-2">
+          <label class="field-label">How did you hear about us? <span class="text-ink/30 normal-case">(optional)</span></label>
+          <input id="referral_source" type="text" class="field-input" placeholder="e.g. Instagram, Google, referral from a friend…" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= § B — PROPERTY DETAILS ======= -->
+    <div class="section-block">
+      <div class="mb-8">
+        <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-forest-brand mb-2">§ B — Property Details</div>
+        <h2 class="font-display text-2xl md:text-3xl font-bold">Tell us about the plot.</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-x-8 gap-y-8">
+        <div class="md:col-span-2">
+          <label class="field-label">Plot Address / Location Description <span class="text-red-500">*</span></label>
+          <input id="plot_address" type="text" class="field-input" placeholder="e.g. Behind Shoprite, along Admiralty Way, Lekki Phase 1" />
+          <div class="field-error" id="err-plot_address">Plot address is required.</div>
+        </div>
+        <div>
+          <label class="field-label">Area / Estate Name <span class="text-red-500">*</span></label>
+          <input id="estate_name" type="text" class="field-input" placeholder="e.g. Mayfair Gardens, Eleganza Estate" />
+          <div class="field-error" id="err-estate_name">Estate or area name is required.</div>
+        </div>
+        <div>
+          <label class="field-label">Local Government Area (LGA) <span class="text-red-500">*</span></label>
+          <select id="lga" class="field-input">
+            <option value="">Select LGA…</option>
+            <option>Agege</option><option>Ajeromi-Ifelodun</option><option>Alimosho</option>
+            <option>Amuwo-Odofin</option><option>Apapa</option><option>Badagry</option>
+            <option>Epe</option><option>Eti-Osa</option><option>Ibeju-Lekki</option>
+            <option>Ifako-Ijaiye</option><option>Ikeja</option><option>Ikorodu</option>
+            <option>Kosofe</option><option>Lagos Island</option><option>Lagos Mainland</option>
+            <option>Mushin</option><option>Ojo</option><option>Oshodi-Isolo</option>
+            <option>Shomolu</option><option>Surulere</option>
+          </select>
+          <div class="field-error" id="err-lga">Please select an LGA.</div>
+        </div>
+        <div>
+          <label class="field-label">Approximate Plot Size <span class="text-ink/30 normal-case">(optional)</span></label>
+          <input id="plot_size" type="text" class="field-input" placeholder="e.g. 600 sqm, half plot, 1 acre" />
+        </div>
+        <div>
+          <label class="field-label">Survey Plan Number <span class="text-ink/30 normal-case">(if known)</span></label>
+          <input id="survey_plan_number" type="text" class="field-input" placeholder="e.g. SP/LA/2021/001" />
+        </div>
+        <div>
+          <label class="field-label">Registered Title Number <span class="text-ink/30 normal-case">(if known)</span></label>
+          <input id="title_number" type="text" class="field-input" placeholder="e.g. CT/0001/2019" />
+        </div>
+        <!-- Premium only -->
+        <div id="num-plots-field" class="hidden">
+          <label class="field-label">Number of Plots <span class="font-mono text-[9px] text-forest-brand ml-1">Premium</span></label>
+          <input id="number_of_plots" type="number" min="1" class="field-input" placeholder="e.g. 3" />
+        </div>
+        <div>
+          <label class="field-label">How was the land acquired? <span class="text-red-500">*</span></label>
+          <select id="acquisition_method" class="field-input">
+            <option value="">Select…</option>
+            <option value="Direct from landowner">Direct from landowner</option>
+            <option value="Through an agent or developer">Through an agent / developer</option>
+            <option value="Cooperative or association">Cooperative / association</option>
+            <option value="Inheritance">Inheritance</option>
+            <option value="Auction or government allocation">Auction / government allocation</option>
+            <option value="Not yet purchased">Not yet purchased — evaluating</option>
+          </select>
+          <div class="field-error" id="err-acquisition_method">Please select an acquisition method.</div>
+        </div>
+        <div>
+          <label class="field-label">Seller / Agent Name <span class="text-ink/30 normal-case">(if applicable)</span></label>
+          <input id="seller_agent_name" type="text" class="field-input" placeholder="Individual or company name" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= § C — DOCUMENT UPLOADS ======= -->
+    <div class="section-block">
+      <div class="mb-4">
+        <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-forest-brand mb-2">§ C — Document Uploads</div>
+        <h2 class="font-display text-2xl md:text-3xl font-bold">Share what you have.</h2>
+        <p class="text-ink/60 mt-2 text-sm leading-relaxed max-w-lg">
+          All uploads are optional — most clients don't have every document yet. Upload whatever is available. PDF, JPG, and PNG accepted, max 10 MB each.
+        </p>
+      </div>
+      <!-- Tier hint -->
+      <div class="mb-8 border-l-4 border-lime-brand pl-4 py-2" style="background:rgba(142,207,15,0.08);">
+        <div class="font-mono text-[9px] tracking-widest uppercase text-forest-brand mb-1">Most useful for your tier</div>
+        <div id="doc-tier-hint" class="text-sm text-ink/70"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-5" id="upload-grid"></div>
+    </div>
+
+    <!-- ======= § D — CONCERNS ======= -->
+    <div class="section-block">
+      <div class="mb-8">
+        <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-forest-brand mb-2">§ D — Assessment Focus</div>
+        <h2 class="font-display text-2xl md:text-3xl font-bold">What do you want verified?</h2>
+        <p class="text-ink/60 mt-2 text-sm">Select all that apply — this helps us prioritise what to check first.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-3 mb-8">
+        <label class="check-item">
+          <input type="checkbox" name="concerns" value="Government acquisition status" />
+          <span class="text-sm leading-snug">Government acquisition / committed land status</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="concerns" value="Lagos State master plan alignment" />
+          <span class="text-sm leading-snug">Lagos State master plan alignment</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="concerns" value="Road setback / coastal road issues" />
+          <span class="text-sm leading-snug">Road setback / coastal road issues</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="concerns" value="Canal / drainage / flood encroachment" />
+          <span class="text-sm leading-snug">Canal / drainage / flood encroachment</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="concerns" value="Omo onile / family land dispute" />
+          <span class="text-sm leading-snug">Omo onile / family land disputes</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="concerns" value="Authenticity of title documents" />
+          <span class="text-sm leading-snug">Authenticity of title documents</span>
+        </label>
+      </div>
+      <div>
+        <label class="field-label">Other concerns <span class="text-ink/30 normal-case">(optional)</span></label>
+        <textarea id="other_concerns" class="field-input" rows="3" placeholder="Describe any other specific risks or questions…"></textarea>
+      </div>
+    </div>
+
+    <!-- ======= § E — ADVISORY CALL (Standard + Premium only) ======= -->
+    <div class="section-block" id="advisory-section" style="display:none;">
+      <div class="mb-8">
+        <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-forest-brand mb-2">§ E — Advisory Call</div>
+        <h2 class="font-display text-2xl md:text-3xl font-bold">Schedule your call.</h2>
+        <p id="advisory-note" class="text-ink/60 mt-2 text-sm">A 30-minute advisory call with the reporting planner is included in your Standard package.</p>
+      </div>
+      <div>
+        <label class="field-label">Preferred Date & Time</label>
+        <input id="preferred_call_datetime" type="datetime-local" class="field-input" />
+        <p class="font-mono text-[9px] text-ink/40 mt-2 tracking-wide">We will confirm availability within 24 hours of receiving your report.</p>
+      </div>
+    </div>
+
+    <!-- ======= § F — CONSENT ======= -->
+    <div class="section-block">
+      <div class="mb-6">
+        <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-forest-brand mb-2">§ F — Data Consent</div>
+        <h2 class="font-display text-2xl md:text-3xl font-bold">Before you submit.</h2>
+      </div>
+      <label class="check-item mb-2">
+        <input type="checkbox" id="consent" />
+        <span class="text-sm leading-relaxed">
+          I agree that Solidbase Consulting Limited may process my personal data and property details for the purpose of conducting a planning risk assessment. I understand my information will not be shared with third parties for marketing purposes. <span class="text-red-500">*</span>
+        </span>
+      </label>
+      <div class="field-error" id="err-consent">You must agree to data processing to continue.</div>
+    </div>
+
+    <!-- ======= GLOBAL ERROR ======= -->
+    <div id="form-global-error" class="hidden mb-6 border-l-4 border-red-500 pl-4 py-3" style="background:rgba(220,38,38,0.05);">
+      <div class="font-mono text-[10px] tracking-widest uppercase text-red-600 mb-1">Submission Error</div>
+      <div id="form-global-error-msg" class="text-sm text-red-700">Something went wrong. Please try again or email us directly at Info@solidbaseconsultingltd.com</div>
+    </div>
+
+    <!-- ======= SUBMIT ======= -->
+    <div class="pt-8 flex flex-col sm:flex-row gap-4 items-start">
+      <button id="submit-btn" type="submit" class="btn-lime px-10 py-5 font-semibold uppercase tracking-wider text-sm">
+        <span id="btn-text">Submit Assessment Request</span>
+        <span id="btn-spinner" class="hidden"><span class="spinner"></span></span>
+      </button>
+      <p class="text-ink/40 text-xs font-mono tracking-wide self-center leading-relaxed">
+        Your data is encrypted and stored securely.<br>We will respond within 24–48 hours.
+      </p>
+    </div>
+
+  </form>
+
+  <!-- ======= SUCCESS SCREEN ======= -->
+  <div id="success-screen" class="hidden py-20 text-center">
+    <div class="w-20 h-20 bg-lime-brand mx-auto flex items-center justify-center mb-8 text-3xl font-bold text-ink">✓</div>
+    <div class="font-mono text-[10px] tracking-widest uppercase text-forest-brand mb-4">Assessment Received</div>
+    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">You're in the queue.</h2>
+    <p class="text-ink/60 max-w-md mx-auto leading-relaxed mb-3">
+      Your <strong id="success-tier-label">Standard</strong> assessment request has been received. A registered town planner will review your submission and follow up within <strong>24–48 hours</strong>.
+    </p>
+    <p class="text-ink/40 text-sm font-mono tracking-wide mb-10">A confirmation email has been sent to your inbox.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="index.html" class="btn-lime px-8 py-4 font-semibold uppercase tracking-wider text-sm">
+        Back to Solidbase
+      </a>
+      <a href="index.html#contact" class="px-8 py-4 border-2 border-ink font-semibold uppercase tracking-wider text-sm hover:bg-ink hover:text-paper transition text-center">
+        Contact Us Directly
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer class="bg-ink text-white/30 py-8 text-center font-mono text-[10px] tracking-widest uppercase">
+  © 2026 Solidbase Consulting Limited · Lagos, Nigeria
+</footer>
+
+<script>
+  const SUPABASE_URL = 'https://zphecbxxnxtebizjrbqi.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwaGVjYnh4bnh0ZWJpempyYnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNTI0NjAsImV4cCI6MjA5MDYyODQ2MH0.zzRNymHEyTBe2d-Ohn-fSfmdNJSqgo11MPBK2Uv8HSc';
+
+  // --- Read tier from URL ---
+  const params = new URLSearchParams(window.location.search);
+  const tier = (['basic','standard','premium'].includes(params.get('tier'))) ? params.get('tier') : 'standard';
+
+  const tierCfg = {
+    basic: {
+      label: 'Basic',
+      badgeClass: 'badge-basic',
+      description: 'A focused title trace and zoning check for a single plot — signed by a registered town planner.',
+      docHint: 'For Basic: Survey Plan and Receipt of Purchase are the most important. Deed of Assignment is also very useful.',
+      advisory: null,
+    },
+    standard: {
+      label: 'Standard',
+      badgeClass: 'badge-standard',
+      description: 'The full Planning Risk Report — master plan cross-check, environmental flags, graded risk rating, and a 30-minute advisory call.',
+      docHint: 'For Standard: include Survey Plan, Deed of Assignment, and C of O if available. The more you upload, the deeper the report.',
+      advisory: 'A 30-minute advisory call with the reporting planner is included in your Standard package.',
+    },
+    premium: {
+      label: 'Premium',
+      badgeClass: 'badge-premium',
+      description: 'Portfolio-scale due diligence — multi-plot review, 10-year outlook, site visit, and a 90-day advisory retainer.',
+      docHint: 'For Premium: upload all available documents across every plot. Survey Plans, C of O, Excision/Gazette, and Governor\'s Consent are all highly valuable.',
+      advisory: 'A 90-minute strategy session with the principal planner is included in your Premium package.',
+    },
+  };
+
+  const cfg = tierCfg[tier];
+
+  // Apply header UI
+  document.getElementById('tier-badge').textContent = cfg.label;
+  document.getElementById('tier-badge').className = `font-mono text-[10px] tracking-widest uppercase px-3 py-1 ${cfg.badgeClass}`;
+  document.getElementById('tier-headline').textContent = cfg.label + '.';
+  document.getElementById('tier-description').textContent = cfg.description;
+  document.getElementById('doc-tier-hint').textContent = cfg.docHint;
+  document.getElementById('success-tier-label').textContent = cfg.label;
+  document.title = `${cfg.label} Assessment — Solidbase Consulting`;
+
+  // Premium-only fields
+  if (tier === 'premium') document.getElementById('num-plots-field').classList.remove('hidden');
+
+  // Advisory call section
+  if (tier === 'standard' || tier === 'premium') {
+    document.getElementById('advisory-section').style.display = '';
+    document.getElementById('advisory-note').textContent = cfg.advisory;
+  }
+
+  // --- Document upload definitions ---
+  const docs = [
+    { id: 'doc_survey_plan',       label: 'Survey Plan',                           hint: 'Most important', tiers: ['basic','standard','premium'] },
+    { id: 'doc_deed',              label: 'Deed of Assignment',                     hint: 'Most important', tiers: ['basic','standard','premium'] },
+    { id: 'doc_coc',               label: 'Certificate of Occupancy (C of O)',      hint: 'Very useful',    tiers: ['standard','premium'] },
+    { id: 'doc_governors_consent', label: "Governor's Consent",                     hint: 'Useful',         tiers: ['standard','premium'] },
+    { id: 'doc_excision',          label: 'Excision / Gazette Document',            hint: 'If applicable',  tiers: ['standard','premium'] },
+    { id: 'doc_receipt',           label: 'Receipt of Purchase / Allocation Letter',hint: 'Recommended',    tiers: ['basic','standard','premium'] },
+    { id: 'doc_contract',          label: 'Contract of Sale',                       hint: 'If available',   tiers: ['standard','premium'] },
+  ];
+
+  const grid = document.getElementById('upload-grid');
+  docs.forEach(doc => {
+    const dimmed = doc.tiers.includes(tier) ? '' : 'opacity-40';
+    const hintColor = doc.hint === 'Most important' ? 'text-forest-brand font-semibold' : 'text-ink/40';
+    grid.insertAdjacentHTML('beforeend', `
+      <div class="${dimmed}">
+        <div class="field-label mb-1">${doc.label}</div>
+        <div class="font-mono text-[9px] ${hintColor} tracking-widest uppercase mb-2">${doc.hint}</div>
+        <div class="upload-zone" id="zone-${doc.id}" role="button" tabindex="0" aria-label="Upload ${doc.label}">
+          <input type="file" id="${doc.id}" accept=".pdf,.jpg,.jpeg,.png" class="hidden" />
+          <div id="zone-inner-${doc.id}">
+            <div class="text-xl text-ink/25 mb-1">↑</div>
+            <div class="font-mono text-[9px] tracking-widest uppercase text-ink/40">Click or drag to upload</div>
+            <div class="font-mono text-[8px] text-ink/25 mt-1">PDF · JPG · PNG · max 10 MB</div>
+          </div>
+        </div>
+        <div id="file-name-${doc.id}" class="font-mono text-[9px] text-forest-brand mt-2 hidden"></div>
+        <div id="file-err-${doc.id}" class="font-mono text-[9px] text-red-600 mt-2 hidden"></div>
+      </div>
+    `);
+
+    const zone = document.getElementById(`zone-${doc.id}`);
+    const input = document.getElementById(doc.id);
+
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('keypress', e => { if (e.key === 'Enter' || e.key === ' ') input.click(); });
+    input.addEventListener('change', () => handleFile(doc.id));
+
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        const dt = new DataTransfer(); dt.items.add(e.dataTransfer.files[0]);
+        input.files = dt.files; handleFile(doc.id);
+      }
+    });
+  });
+
+  function handleFile(docId) {
+    const input = document.getElementById(docId);
+    const nameEl = document.getElementById(`file-name-${docId}`);
+    const errEl  = document.getElementById(`file-err-${docId}`);
+    const zone   = document.getElementById(`zone-${docId}`);
+    if (!input.files.length) return;
+    const file = input.files[0];
+    errEl.classList.add('hidden');
+    if (file.size > 10 * 1024 * 1024) {
+      errEl.textContent = 'File exceeds 10 MB limit.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    zone.classList.add('has-file');
+    nameEl.textContent = '✓ ' + file.name;
+    nameEl.classList.remove('hidden');
+  }
+
+  // --- Upload single file to Supabase Storage ---
+  async function uploadFile(sessionId, docId, file) {
+    const ext  = file.name.split('.').pop().toLowerCase();
+    const path = `${sessionId}/${docId}/${Date.now()}.${ext}`;
+    const res  = await fetch(`${SUPABASE_URL}/storage/v1/object/assessment-documents/${path}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': file.type || 'application/octet-stream',
+        'x-upsert': 'false',
+      },
+      body: file,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Upload failed');
+    }
+    return path;
+  }
+
+  // --- Validation ---
+  function validate() {
+    let valid = true;
+    const required = ['full_name','email','phone','country','plot_address','estate_name','lga','acquisition_method'];
+    required.forEach(id => {
+      const el  = document.getElementById(id);
+      const err = document.getElementById(`err-${id}`);
+      const empty = !el || !el.value.trim();
+      if (el) el.classList.toggle('error', empty);
+      if (err) err.classList.toggle('show', empty);
+      if (empty) valid = false;
+    });
+    // Email format
+    const emailEl = document.getElementById('email');
+    if (emailEl && emailEl.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+      emailEl.classList.add('error');
+      document.getElementById('err-email').textContent = 'Please enter a valid email address.';
+      document.getElementById('err-email').classList.add('show');
+      valid = false;
+    }
+    // Consent
+    const consent = document.getElementById('consent');
+    const consentErr = document.getElementById('err-consent');
+    if (!consent.checked) { consentErr.classList.add('show'); valid = false; }
+    else consentErr.classList.remove('show');
+    return valid;
+  }
+
+  // --- Submit ---
+  document.getElementById('intake-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Honeypot check — silently abort if bot filled it
+    if (document.querySelector('input[name="website"]').value) return;
+
+    if (!validate()) {
+      const firstErr = document.querySelector('.field-input.error, .field-error.show');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const btn       = document.getElementById('submit-btn');
+    const btnText   = document.getElementById('btn-text');
+    const btnSpin   = document.getElementById('btn-spinner');
+    const globalErr = document.getElementById('form-global-error');
+    globalErr.classList.add('hidden');
+    btn.disabled = true;
+    btnText.textContent = 'Submitting…';
+    btnSpin.classList.remove('hidden');
+
+    try {
+      // 1. Upload all selected files
+      const sessionId = crypto.randomUUID();
+      const uploadedDocuments = [];
+
+      for (const doc of docs) {
+        const input = document.getElementById(doc.id);
+        if (input && input.files.length) {
+          try {
+            const path = await uploadFile(sessionId, doc.id, input.files[0]);
+            uploadedDocuments.push({ field: doc.id, label: doc.label, path, name: input.files[0].name });
+          } catch (uploadErr) {
+            console.warn(`Upload skipped for ${doc.id}:`, uploadErr.message);
+            // Non-blocking — continue without this file
+          }
+        }
+      }
+
+      // 2. Collect checked concerns
+      const concerns = Array.from(document.querySelectorAll('input[name="concerns"]:checked')).map(el => el.value);
+
+      // 3. Build payload
+      const payload = {
+        session_id: sessionId,
+        selected_tier: tier,
+        full_name: document.getElementById('full_name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        country_of_residence: document.getElementById('country').value,
+        referral_source: document.getElementById('referral_source').value.trim() || null,
+        plot_address: document.getElementById('plot_address').value.trim(),
+        estate_name: document.getElementById('estate_name').value.trim(),
+        lga: document.getElementById('lga').value,
+        plot_size: document.getElementById('plot_size').value.trim() || null,
+        survey_plan_number: document.getElementById('survey_plan_number').value.trim() || null,
+        title_number: document.getElementById('title_number').value.trim() || null,
+        number_of_plots: tier === 'premium' ? (parseInt(document.getElementById('number_of_plots').value) || null) : null,
+        acquisition_method: document.getElementById('acquisition_method').value,
+        seller_agent_name: document.getElementById('seller_agent_name').value.trim() || null,
+        concerns,
+        other_concerns: document.getElementById('other_concerns').value.trim() || null,
+        preferred_call_datetime: (tier === 'standard' || tier === 'premium') ? document.getElementById('preferred_call_datetime').value || null : null,
+        uploaded_documents: uploadedDocuments,
+        consent_given: true,
+      };
+
+      // 4. Send to Edge Function
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/assessment-intake`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${ANON_KEY}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Submission failed. Please try again.');
+      }
+
+      // 5. Success
+      document.getElementById('intake-form').style.display = 'none';
+      document.getElementById('success-screen').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      console.error('Submission error:', err);
+      document.getElementById('form-global-error-msg').textContent = err.message || 'Something went wrong. Please try again or email Info@solidbaseconsultingltd.com';
+      globalErr.classList.remove('hidden');
+      globalErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } finally {
+      btn.disabled = false;
+      btnText.textContent = 'Submit Assessment Request';
+      btnSpin.classList.add('hidden');
+    }
+  });
+
+  // Live validation — remove error state on input
+  ['full_name','email','phone','country','plot_address','estate_name','lga','acquisition_method'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      if (el.value.trim()) {
+        el.classList.remove('error');
+        const err = document.getElementById(`err-${id}`);
+        if (err) err.classList.remove('show');
+      }
+    });
+  });
+</script>
+</body>
+</html>
